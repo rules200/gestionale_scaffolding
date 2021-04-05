@@ -20,21 +20,19 @@ export class AuthenticationService {
   }
 
   authenticate(username, password) {
-    console.log(username);
-    console.log(password);
-    const headers = new HttpHeaders({ Authorization: 'Basic ' + btoa(username + ':' + password) });
-    return this.httpClient.get<User>('http://localhost:9000/employees/validateLogin', { headers }).pipe(
+    return this.httpClient.post<any>('http://localhost:9000/authenticate', { username, password }).pipe(
       map(
         userData => {
           sessionStorage.setItem('username', username);
-          let authString = 'Basic ' + btoa(username + ':' + password);
-          sessionStorage.setItem('basicauth', authString);
+          let tokenStr = 'Bearer ' + userData.token;
+          sessionStorage.setItem('token', tokenStr);
           return userData;
         }
       )
 
     );
   }
+
 
   isUserLoggedIn() {
     let user = sessionStorage.getItem('username')
